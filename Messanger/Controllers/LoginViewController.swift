@@ -9,22 +9,46 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-
+    
+    private var imageView : UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "logo")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    private var scrollView : UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.clipsToBounds = true
+        return scrollView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        self.view.backgroundColor = .white
+        self.title = "Log In"
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(didTapRegister))
+        
+        //Add View
+        
+        self.view.addSubview(self.scrollView)
+        self.scrollView.addSubview(self.imageView)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.scrollView.frame = self.view.bounds
+        let size = self.scrollView.width / 3
+        self.imageView.frame = CGRect(x: (self.scrollView.width - size) / 2,
+                                      y: 20,
+                                      width: size,
+                                      height: size)
     }
-    */
+    
+    @objc private func didTapRegister(){
+        let registerVC = RegisterViewController()
+        registerVC.title = "Register"
+        self.navigationController?.pushViewController(registerVC, animated: true)
+    }
 
 }
