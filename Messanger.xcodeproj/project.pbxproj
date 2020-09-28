@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		301969B5251A13F900AB8C1A /* DataBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301969B4251A13F900AB8C1A /* DataBaseManager.swift */; };
 		30B35742251E05B600E45198 /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B35741251E05B600E45198 /* ProfileTableViewCell.swift */; };
-		30BEF0822515D7CB004A13B5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30BEF0812515D7CB004A13B5 /* GoogleService-Info.plist */; };
 		30E8268A2503E01900DCB323 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E826892503E01900DCB323 /* AppDelegate.swift */; };
 		30E8268C2503E01900DCB323 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E8268B2503E01900DCB323 /* SceneDelegate.swift */; };
 		30E8268E2503E01900DCB323 /* ConversationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E8268D2503E01900DCB323 /* ConversationsViewController.swift */; };
@@ -24,6 +23,7 @@
 		30E826AF2503EA1600DCB323 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E826AE2503EA1600DCB323 /* ProfileViewController.swift */; };
 		30E826B12503EF1500DCB323 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30E826B02503EF1500DCB323 /* Default-568h@2x.png */; };
 		30E826B32503FC9200DCB323 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E826B22503FC9200DCB323 /* Extentions.swift */; };
+		7B4C86DA2521FCA300AAF34F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7B4C86D92521FCA300AAF34F /* GoogleService-Info.plist */; };
 		D82A344FC08956A61F27DE7E /* Pods_Messanger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10B1210398FCF926371CF5B7 /* Pods_Messanger.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,7 +31,6 @@
 		10B1210398FCF926371CF5B7 /* Pods_Messanger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messanger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		301969B4251A13F900AB8C1A /* DataBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseManager.swift; sourceTree = "<group>"; };
 		30B35741251E05B600E45198 /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
-		30BEF0812515D7CB004A13B5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		30E826862503E01900DCB323 /* Messanger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messanger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30E826892503E01900DCB323 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		30E8268B2503E01900DCB323 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -49,6 +48,7 @@
 		30E826B02503EF1500DCB323 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		30E826B22503FC9200DCB323 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
 		55AD340C27A091C3FF84AD04 /* Pods-Messanger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messanger.release.xcconfig"; path = "Target Support Files/Pods-Messanger/Pods-Messanger.release.xcconfig"; sourceTree = "<group>"; };
+		7B4C86D92521FCA300AAF34F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		927A37296380E7DC5E302D78 /* Pods-Messanger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messanger.debug.xcconfig"; path = "Target Support Files/Pods-Messanger/Pods-Messanger.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,12 +117,12 @@
 		30E826882503E01900DCB323 /* Messanger */ = {
 			isa = PBXGroup;
 			children = (
-				30BEF0812515D7CB004A13B5 /* GoogleService-Info.plist */,
+				7B4C86D92521FCA300AAF34F /* GoogleService-Info.plist */,
 				30E826972503E01D00DCB323 /* Info.plist */,
+				7B4C86D62521FBD700AAF34F /* ViewModel */,
+				7B4C86D72521FBEB00AAF34F /* Model */,
 				30E826A12503E05300DCB323 /* Resources */,
-				30E826A02503E04A00DCB323 /* ViewModel */,
 				30E8269F2503E04400DCB323 /* View */,
-				30E8269E2503E03400DCB323 /* Model */,
 				30E8269D2503E02800DCB323 /* Controllers */,
 			);
 			path = Messanger;
@@ -137,26 +137,12 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		30E8269E2503E03400DCB323 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		30E8269F2503E04400DCB323 /* View */ = {
 			isa = PBXGroup;
 			children = (
 				30E826A22503E06A00DCB323 /* StoryBoards */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		30E826A02503E04A00DCB323 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		30E826A12503E05300DCB323 /* Resources */ = {
@@ -178,6 +164,20 @@
 				30E826942503E01D00DCB323 /* LaunchScreen.storyboard */,
 			);
 			path = StoryBoards;
+			sourceTree = "<group>";
+		};
+		7B4C86D62521FBD700AAF34F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		7B4C86D72521FBEB00AAF34F /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		A991D8A3C03B3EAEE84F24CA /* Frameworks */ = {
@@ -250,9 +250,9 @@
 			files = (
 				30E826962503E01D00DCB323 /* LaunchScreen.storyboard in Resources */,
 				30E826B12503EF1500DCB323 /* Default-568h@2x.png in Resources */,
-				30BEF0822515D7CB004A13B5 /* GoogleService-Info.plist in Resources */,
 				30E826932503E01D00DCB323 /* Assets.xcassets in Resources */,
 				30E826912503E01900DCB323 /* Main.storyboard in Resources */,
+				7B4C86DA2521FCA300AAF34F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
