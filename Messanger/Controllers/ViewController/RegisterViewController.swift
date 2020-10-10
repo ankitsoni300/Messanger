@@ -185,7 +185,7 @@ class RegisterViewController: UIViewController {
         }
         
         DataBaseManager.shared.validateUser(with: email) { (exists) -> (Void) in
-            print(exists)
+            
             guard !exists else {
                 self.alertUserRegistrationError(message: "This user already exists")
                 return

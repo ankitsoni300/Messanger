@@ -26,6 +26,7 @@ final class DataBaseManager: NSObject {
         self.dbObj.child(email).setValue(["firstName":model.userFirstName, "lastName" : model.userLastName])
     }
     
+    ///Validate User
     public func validateUser(with email : String, completion : @escaping ((Bool) -> (Void))){
         
         var safeEmail = email.replacingOccurrences(of: ".", with: "-")
