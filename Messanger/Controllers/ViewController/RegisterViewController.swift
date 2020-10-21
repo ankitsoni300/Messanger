@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 class RegisterViewController: UIViewController {
     
@@ -95,6 +96,8 @@ class RegisterViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 20, weight : .bold)
         return button
     }()
+    private let progressHud = JGProgressHUD(style: .dark)
+    private var imgProfile = UIImage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -171,34 +174,72 @@ class RegisterViewController: UIViewController {
         self.lastNameField.resignFirstResponder()
         
         guard let firstName = firstNameField.text,
-            let lastName = lastNameField.text,
-            let email = emailField.text,
-            let password = passwordField.text,
-            !email.isEmpty,
-            !password.isEmpty,
-            !firstName.isEmpty,
-            !lastName.isEmpty,
-            password.count >= 6
-            else {
-                alertUserRegistrationError()
-                return
+              let lastName = lastNameField.text,
+              let email = emailField.text,
+              let password = passwordField.text,
+              !email.isEmpty,
+              !password.isEmpty,
+              !firstName.isEmpty,
+              !lastName.isEmpty,
+              password.count >= 6
+        else {
+            alertUserRegistrationError()
+            return
         }
         
-        DataBaseManager.shared.validateUser(with: email) { (exists) -> (Void) in
+        self.progressHud.show(in: self.view)
+        
+        DataBaseManager.shared.validateUser(with: email) { [weak self] (exists) -> (Void) in
             
+            guard let strongSelf = self else{
+                return
+            }
+            DispatchQueue.main.async {
+                strongSelf.progressHud.dismiss()
+            }
             guard !exists else {
-                self.alertUserRegistrationError(message: "This user already exists")
+                self?.alertUserRegistrationError(message: "This user already exists")
                 return
             }
             
-            Auth.auth().createUser(withEmail: email, password: password) { [weak self] (result, error) in
-                guard let strongSelf = self else {return}
+            Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
+                
                 guard error == nil else {
                     return
                 }
                 
-                DataBaseManager.shared.insertUser(model: UserData(userFirstName: firstName, userLastName: lastName, userEmail: email))
-
+                let chatUser = UserData(userFirstName: firstName, userLastName: lastName, userEmail: email)
+                
+                UserDefaults.standard.set(email, forKey: "email")
+                
+                DataBaseManager.shared.insertUser(model: chatUser, completion: { success in
+                    
+                    if success{
+                        //upload image
+                        
+                        guard let fileName = chatUser.profilePicture else{
+                            return
+                        }
+                        
+                        guard let dataPng = strongSelf.imgProfile.pngData() else {
+                            return
+                        }
+                        
+                        StorageManager.instance.uploadProfilePicToFirebase(data: dataPng, fileName: fileName, completion: { result in
+                            
+                            switch result{
+                            case .success(let downloadUrl):
+                                print(downloadUrl)
+                                UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                            case .failure(let error):
+                                print(error)
+                            }
+                            
+                        })
+                    }
+                    
+                })
+                
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             }
             
@@ -263,6 +304,7 @@ extension RegisterViewController : UIImagePickerControllerDelegate, UINavigation
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {return}
         self.imageView.image = selectedImage
+        self.imgProfile = selectedImage
         picker.dismiss(animated: true, completion: nil)
     }
     

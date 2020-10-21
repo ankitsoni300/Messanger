@@ -9,6 +9,8 @@
 import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
+import JGProgressHUD
 
 class LoginViewController: UIViewController {
     
@@ -76,8 +78,26 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let googleSignInButton : GIDSignInButton = {
+        let button = GIDSignInButton()
+        return button
+    }()
+    
+    private var loginObserver : NSObjectProtocol?
+    private let progressHud = JGProgressHUD(style: .dark)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLoginNotification, object: nil, queue: .main) { [weak self] _ in
+            guard let strongSelf = self else{
+                return
+            }
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+        }
+        
+        GIDSignIn.sharedInstance()?.presentingViewController = self
+        
         self.view.backgroundColor = .white
         self.title = "Log In"
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(didTapRegister))
@@ -94,7 +114,8 @@ class LoginViewController: UIViewController {
         self.scrollView.addSubview(self.emailField)
         self.scrollView.addSubview(self.passwordField)
         self.scrollView.addSubview(self.loginButton)
-        self.scrollView.addSubview(faceBookLoginButton)
+        self.scrollView.addSubview(self.faceBookLoginButton)
+        self.scrollView.addSubview(self.googleSignInButton)
     }
     
     override func viewDidLayoutSubviews() {
@@ -121,8 +142,16 @@ class LoginViewController: UIViewController {
                                         width: self.scrollView.width - 60,
                                         height: 52)
         
-        self.faceBookLoginButton.frame = CGRect(x: 30, y: self.loginButton.bottom + 40, width: self.scrollView.width - 60, height: 52)
+        self.faceBookLoginButton.frame = CGRect(x: 30, y: self.loginButton.bottom + 25, width: self.scrollView.width - 60, height: 52)
         
+        self.googleSignInButton.frame = CGRect(x: 30, y: self.faceBookLoginButton.bottom + 25, width: self.scrollView.width - 60, height: 52)
+        
+    }
+    
+    deinit {
+        if let loginObserver = loginObserver{
+            NotificationCenter.default.removeObserver(loginObserver)
+        }
     }
     
     @objc private func didTapRegister(){
@@ -139,8 +168,14 @@ class LoginViewController: UIViewController {
             return
         }
         
+        self.progressHud.show(in: self.view)
+        
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] (result, error) in
             guard let strongSelf = self else {return}
+            DispatchQueue.main.async {
+                strongSelf.progressHud.dismiss()
+            }
+            UserDefaults.standard.set(email, forKey: "email")
             guard error == nil else {return}
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         }
@@ -188,7 +223,7 @@ extension LoginViewController : LoginButtonDelegate{
         
         let credentials = FacebookAuthProvider.credential(withAccessToken: token)
         
-        let fbRequest = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields" : "name,email"], tokenString: token, version: nil, httpMethod: .get)
+        let fbRequest = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields" : "email,first_name,last_name,picture.type(large)"], tokenString: token, version: nil, httpMethod: .get)
         
         fbRequest.start { (connection, result, error) in
             guard let result = result as? [String : Any], error == nil else {
@@ -196,20 +231,52 @@ extension LoginViewController : LoginButtonDelegate{
                 return
             }
             
-            guard let userName = result["name"] as? String, let userEmail = result["email"] as? String else{
+            guard let firstName = result["first_name"] as? String, let lastName = result["last_name"] as? String, let userEmail = result["email"] as? String, let picture = result["picture"] as? [String:Any], let data = picture["data"] as? [String:Any], let urlString = data["url"] as? String else{
                 return
             }
             
-            let nameComponent = userName.components(separatedBy: " ")
-            guard nameComponent.count == 2 else{
-                return
-            }
-            let firstName = nameComponent[0]
-            let lastName = nameComponent[1]
+            UserDefaults.standard.set(userEmail, forKey: "email")
             
             DataBaseManager.shared.validateUser(with: userEmail) { (exists) -> (Void) in
                 if !exists{
-                    DataBaseManager.shared.insertUser(model: UserData(userFirstName: firstName, userLastName: lastName, userEmail: userEmail))
+                    
+                    let chatUser = UserData(userFirstName: firstName, userLastName: lastName, userEmail: userEmail)
+                    
+                    guard let fileName = chatUser.profilePicture else{
+                        return
+                    }
+                    
+                    DataBaseManager.shared.insertUser(model: chatUser, completion: { result in
+                        if result{
+                            
+                            //Download data from fb image
+                            
+                            guard let url = URL(string: urlString) else {
+                                return
+                            }
+                            
+                            URLSession.shared.dataTask(with: url, completionHandler: { data, _,_ in
+                                
+                                guard let data = data else{
+                                    return
+                                }
+                                //uploadImage
+                                StorageManager.instance.uploadProfilePicToFirebase(data: data, fileName: fileName, completion: { result in
+                                    
+                                    switch result{
+                                    case .success(let downloadUrl):
+                                        
+                                        UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                        print("url")
+                                        
+                                    case .failure(let error):
+                                        print("Storage maanger error: \(error)")
+                                    }
+                                    
+                                })
+                            }).resume()
+                        }
+                    })
                 }
             }
             

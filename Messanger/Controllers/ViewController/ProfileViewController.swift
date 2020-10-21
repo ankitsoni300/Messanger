@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
 
 class ProfileViewController: UIViewController {
     
@@ -37,15 +38,18 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = self.tableView.dequeueReusableCell(withIdentifier: "ProfileTableViewCell", for: indexPath) as? ProfileTableViewCell else{
+        guard let logOutCell = self.tableView.dequeueReusableCell(withIdentifier: "logout", for: indexPath) as? ProfileTableViewCell else{
             return UITableViewCell()
         }
         
-        cell.textLabel?.text = data[indexPath.row]
-        cell.textLabel?.textAlignment = .center
-        cell.textLabel?.textColor = .red
+    
+        logOutCell.textLabel?.text = data[indexPath.row]
+        logOutCell.textLabel?.textAlignment = .center
+        logOutCell.textLabel?.textColor = .red
         
-        return cell
+        
+        return logOutCell
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -55,6 +59,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
             let actionSheetVC = UIAlertController(title: "Messanger", message: "Do you want to log out?", preferredStyle: .actionSheet)
             let actionLogout = UIAlertAction(title: "LogOut", style: .destructive) { [weak self] _ in
                 do{
+                    GIDSignIn.sharedInstance()?.signOut()
                     let loginManager = LoginManager()
                     loginManager.logOut()
                     try Auth.auth().signOut()
@@ -71,6 +76,25 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
             self.present(actionSheetVC, animated: true, completion: nil)
             
         }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView()
+        let imageView = UIImageView(frame: CGRect(x: (self.tableView.width/2) - 52,
+                                                  y: 11,
+                                                  width: 105,
+                                                  height: 105))
+        imageView.layer.cornerRadius = imageView.frame.width / 2
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+        view.addSubview(imageView)
+        view.backgroundColor = .link
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 127
     }
     
 }
